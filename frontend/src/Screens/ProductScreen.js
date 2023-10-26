@@ -10,6 +10,9 @@ import logger from 'use-reducer-logger'
 import Rating from '../Component/Rating'
 import Button from 'react-bootstrap/esm/Button'
 import { Helmet } from 'react-helmet-async'
+import LoadingBox from '../Component/LoadingBox'
+import MessageBox from '../Component/MessageBox'
+import { getError } from '../utils'
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -40,16 +43,16 @@ function ProductScreen () {
         const result = await axios.get(`/api/product/id/${_id}`)
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data })
       } catch (error) {
-        dispatch({ type: 'FETCH_FAIL', payload: error.message })
+        dispatch({ type: 'FETCH_FAIL', payload: getError(error) })
       }
     }
     fetchData()
   }, [_id])
 
   return loading ? (
-    <div>loading...</div>
+    <LoadingBox />
   ) : error ? (
-    <div>{error}</div>
+    <MessageBox variant='danger'>{error}</MessageBox>
   ) : (
     <div>
       <Row>
