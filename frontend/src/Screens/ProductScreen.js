@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/esm/Row'
 import ListGroup from 'react-bootstrap/esm/ListGroup'
 import Card from 'react-bootstrap/esm/Card'
 import Badge from 'react-bootstrap/esm/Badge'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import logger from 'use-reducer-logger'
 import Rating from '../Component/Rating'
 import Button from 'react-bootstrap/esm/Button'
@@ -29,6 +29,7 @@ const reducer = (state, action) => {
 }
 
 function ProductScreen () {
+  const navigate = useNavigate()
   const params = useParams()
   const { _id } = params
   const [{ loading, error, product }, dispatch] = useReducer(logger(reducer), {
@@ -60,6 +61,7 @@ function ProductScreen () {
       return
     }
     ctxDispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } })
+    navigate('/cart')
   }
   return loading ? (
     <LoadingBox />
