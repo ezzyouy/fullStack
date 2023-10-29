@@ -15,6 +15,7 @@ import CartScreen from './Screens/CartScreen'
 import SigninScreen from './Screens/SigninScreen'
 import ShippingAddressScreen from './Screens/ShippingAddressScreen'
 import SignupScreen from './Screens/SignupScreen'
+import PaymentScreen from './Screens/PaymentScreen'
 
 function App () {
   const { state, dispatch: ctxDispatch } = useContext(Store)
@@ -25,6 +26,7 @@ function App () {
     ctxDispatch({ type: 'USER_SIGNOUT' })
     localStorage.removeItem('userInfo')
     localStorage.removeItem('shippingAddress')
+    localStorage.removeItem('paymentMethod')
   }
 
   return (
@@ -40,7 +42,7 @@ function App () {
               <Nav className='me-auto'>
                 <Link to='/cart' className='nav-link'>
                   Cart
-                  {cart.cartItems.length > 0 && (
+                  {cart.cartItems?.length > 0 && (
                     <Badge pill bg='danger'>
                       {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
                     </Badge>
@@ -80,6 +82,8 @@ function App () {
               <Route path='/signin' element={<SigninScreen />} />
               <Route path='/signup' element={<SignupScreen />} />
               <Route path='/shipping' element={<ShippingAddressScreen />} />
+              <Route path='/payment' element={<PaymentScreen />} />
+
               <Route path='/' element={<HomeScreen />} />
             </Routes>
           </Container>
