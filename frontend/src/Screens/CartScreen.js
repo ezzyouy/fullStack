@@ -106,9 +106,9 @@ function CartScreen () {
               <ListGroup variant='flush'>
                 <ListGroup.Item>
                   <h3>
-                    Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
+                    Subtotal ({cartItems?.reduce((a, c) => a + c.quantity, 0)}{' '}
                     items):$
-                    {cartItems.reduce((a, c) => a + c.price * c.quantity, 0)}
+                    {cartItems?.reduce((a, c) => a + c.price * c.quantity, 0)}
                   </h3>
                 </ListGroup.Item>
                 <ListGroup.Item>
@@ -117,7 +117,7 @@ function CartScreen () {
                       type='button'
                       variant='primary'
                       onClick={checkoutHandler}
-                      disabled={cartItems.length === 0}
+                      disabled={cartItems?.length === 0}
                     >
                       Preceed to Checkout
                     </Button>
