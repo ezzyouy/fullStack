@@ -125,6 +125,7 @@ function SearchScreen() {
 									Any
 								</Link>
 							</li>
+
 							{categories?.map((c) => (
 								<li key={c}>
 									<Link
@@ -149,7 +150,7 @@ function SearchScreen() {
 								</Link>
 							</li>
 							{prices?.map((p) => (
-								<li key={p}>
+								<li key={p.name}>
 									<Link
 										className={p.value === price ? 'text-bold' : ''}
 										to={getFilterUrl({ price: p.value })}
@@ -163,7 +164,6 @@ function SearchScreen() {
 					<div>
 						<h3>Avg. Custome Review</h3>
 						<ul>
-							{console.log(rating)}
 							{ratings?.map((r) => (
 								<li key={r.name}>
 									<Link
