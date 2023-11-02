@@ -26,6 +26,7 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { getError } from './utils';
 import axios from 'axios';
 import SearchBox from './Component/SearchBox';
+import SearchScreen from './Screens/SearchScreen';
 
 function App() {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -123,8 +124,7 @@ function App() {
 								<LinkContainer
 									to={{
 										pathname: '/search',
-										hash: '#hash',
-										search: '?category=abcd',
+										search: `?category=${category}`,
 									}}
 									onClick={() => setSidebarIsOpen(false)}
 								>
@@ -147,6 +147,7 @@ function App() {
 							<Route path="/order/:id" element={<OrderScreen />} />
 							<Route path="/orderhistory" element={<OrderHistoryScrenn />} />
 							<Route path="/profile" element={<ProfileScreen />} />
+							<Route path="/search" element={<SearchScreen />} />
 							<Route path="/" element={<HomeScreen />} />
 						</Routes>
 					</Container>
