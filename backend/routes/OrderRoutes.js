@@ -3,6 +3,7 @@ import expressAsyncHandler from 'express-async-handler';
 import Order from '../models/OrderModel.js';
 import User from '../models/UserModel.js';
 import { generateToken, isAdmin, isAuth } from '../utils.js';
+import Product from '../models/ProductModel.js';
 
 const orderRouter = express.Router();
 
@@ -65,7 +66,15 @@ orderRouter.get(
 			},
 			{ $sort: { _id: 1 } },
 		]);
-		res.send({ users, orders, dailyOrders });
+		const productCategories = await Product.aggregate([
+			{
+				$group: {
+					_id: '$category',
+					count: { $sum: 1 },
+				},
+			},
+		]);
+		res.send({ users, orders, dailyOrders, productCategories });
 	})
 );
 orderRouter.get(

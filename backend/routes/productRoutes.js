@@ -9,7 +9,27 @@ productRouter.get('/', async (req, res) => {
 	const products = await Product.find();
 	res.send(products);
 });
-
+productRouter.post(
+	'/',
+	isAuth,
+	isAdmin,
+	expressAsyncHandler(async (req, res) => {
+		const nweProduct = new Product({
+			name: req.body.name || 'sample name ' + Date.now(),
+			slug: req.body.slug || 'sample-name-' + Date.now(),
+			price: req.body.price || 0,
+			description: req.body.description || 'sample description',
+			category: req.body.category || 'sample category',
+			brand: req.body.brand || 'sample brand',
+			image: req.body.image || '/images/p1.jpg',
+			countInStock: req.body.countInStock || 0,
+			rating: req.body.rating || 0,
+			numReviews: req.body.numReviews || 0,
+		});
+		const product = await nweProduct.save();
+		res.send({ message: 'Product Created', product });
+	})
+);
 productRouter.get(
 	'/admin',
 	isAuth,
@@ -18,8 +38,6 @@ productRouter.get(
 		const { query } = req;
 		const page = query.page || 1;
 		const pageSize = query.pageSize || PAGE_SIZE;
-
-		console.log(page);
 		const products = await Product.find()
 			.skip(pageSize * (page - 1))
 			.limit(pageSize);
