@@ -31,6 +31,7 @@ import ProtectedRoute from './Component/ProtectedRoute';
 import DashbordScreen from './Screens/DashbordScreen';
 import AdminRoute from './Component/AdminRoute';
 import ProductListScreen from './Screens/ProductListScreen';
+import ProductEditScreen from './Screens/ProductEditScreen';
 
 function App() {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -203,6 +204,14 @@ function App() {
 								element={
 									<AdminRoute>
 										<ProductListScreen />
+									</AdminRoute>
+								}
+							/>
+							<Route
+								path="/admin/product/:id"
+								element={
+									<AdminRoute>
+										<ProductEditScreen />
 									</AdminRoute>
 								}
 							/>
