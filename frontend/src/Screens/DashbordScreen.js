@@ -89,7 +89,6 @@ function DashbordScreen() {
 							</Card>
 						</Col>
 					</Row>
-					{console.log(...summary?.dailyOrders?.map((x) => [x._id, x.sales]))}
 					<div className="my-3">
 						<h2>Sales</h2>
 						{summary?.dailyOrders?.length === 0 ? (
@@ -101,6 +100,24 @@ function DashbordScreen() {
 								loader={<div>Loading Chart...</div>}
 								data={[['Date', 'Sales'], ...summary?.dailyOrders?.map((x) => [x._id, x.sales])]}
 								chartType="AreaChart"
+								legendToggle
+							/>
+						)}
+					</div>
+					<div className="my-3">
+						<h2>Categories</h2>
+						{summary?.productCategories?.length === 0 ? (
+							<MessageBox>No Category</MessageBox>
+						) : (
+							<Chart
+								width="100%"
+								height="400px"
+								loader={<div>Loading Chart...</div>}
+								data={[
+									['Category', 'Products'],
+									...summary?.productCategories?.map((x) => [x._id, x.count]),
+								]}
+								chartType="PieChart"
 								legendToggle
 							/>
 						)}
