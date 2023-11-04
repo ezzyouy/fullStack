@@ -53,6 +53,21 @@ productRouter.put(
 		}
 	})
 );
+productRouter.delete(
+	'/:id',
+	isAuth,
+	isAdmin,
+	expressAsyncHandler(async (req, res) => {
+		const productId = req.params.id;
+		const product = await Product.findById(productId);
+		if (product) {
+			await product.deleteOne();
+			res.send({ message: 'Product Not Found' });
+		} else {
+			res.status(404).send({ message: 'No Such Product Exists' });
+		}
+	})
+);
 productRouter.get(
 	'/admin',
 	isAuth,
