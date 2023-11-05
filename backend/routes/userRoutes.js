@@ -2,10 +2,23 @@ import express from 'express';
 import expressAsyncHandler from 'express-async-handler';
 import User from '../models/UserModel.js';
 import bcrypt from 'bcryptjs';
-import { generateToken, isAuth } from '../utils.js';
+import { generateToken, isAdmin, isAuth } from '../utils.js';
 
 const userRouter = express.Router();
 
+userRouter.get(
+	'/',
+	isAuth,
+	isAdmin,
+	expressAsyncHandler(async (req, res) => {
+		const users = await User.find({});
+		if (users) {
+			res.send(users);
+		} else {
+			res.status(404).send({ message: 'No Users Found' });
+		}
+	})
+);
 userRouter.post(
 	'/signin',
 	expressAsyncHandler(async (req, res) => {
