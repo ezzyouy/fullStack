@@ -6,12 +6,13 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Store } from '../Store';
 import { getError } from '../utils';
 import axios from 'axios';
-import Col from 'react-bootstrap/esm/Col';
-import Card from 'react-bootstrap/esm/Card';
-import Row from 'react-bootstrap/esm/Row';
-import ListGroup from 'react-bootstrap/esm/ListGroup';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Row from 'react-bootstrap/Row';
+import ListGroup from 'react-bootstrap/ListGroup';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { toast } from 'react-toastify';
+import Button from 'react-bootstrap/Button';
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -29,6 +30,14 @@ const reducer = (state, action) => {
 			return { ...state, loadingPay: false };
 		case 'PAY_REST':
 			return { ...state, loadingPay: false, successPay: false };
+		case 'DELIVER_REQUEST':
+			return { ...state, loadingDeliver: true };
+		case 'DELIVER_SUCCESS':
+			return { ...state, loadingDeliver: false, successDeliver: true };
+		case 'DELIVER_FAIL':
+			return { ...state, loadingDeliver: false };
+		case 'DELIVER_REST':
+			return { ...state, loadingDeliver: false, successDeliver: false };
 		default:
 			return state;
 	}
@@ -39,13 +48,16 @@ function OrderScreen() {
 	const navigate = useNavigate();
 	const { state, dispatch: ctxDispatch } = useContext(Store);
 	const { userInfo } = state;
-	const [{ loading, error, order, successPay, loadingPay }, dispatch] = useReducer(reducer, {
-		loading: true,
-		error: '',
-		order: {},
-		successPay: false,
-		loadingPay: false,
-	});
+	const [{ loading, error, order, successPay, loadingPay, loadingDeliver, successDeliver }, dispatch] = useReducer(
+		reducer,
+		{
+			loading: true,
+			error: '',
+			order: {},
+			successPay: false,
+			loadingPay: false,
+		}
+	);
 	const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 	function createOrder(data, actions) {
 		return actions.order
@@ -93,10 +105,13 @@ function OrderScreen() {
 		if (!userInfo) {
 			navigate('/signin');
 		}
-		if (!order._id || successPay || (order._id && order._id !== orderId)) {
+		if (!order._id || successPay || (order._id && order._id !== orderId) || successDeliver) {
 			fetchOrder();
 			if (successPay) {
 				dispatch({ type: 'PAY_REST' });
+			}
+			if (successDeliver) {
+				dispatch({ type: 'DELIVER_REST' });
 			}
 		} else {
 			const loadPaypalScript = async () => {
@@ -114,7 +129,26 @@ function OrderScreen() {
 			};
 			loadPaypalScript();
 		}
-	}, [userInfo, navigate, order, orderId, paypalDispatch]);
+	}, [userInfo, navigate, order, orderId, paypalDispatch, successDeliver, successPay]);
+
+	const deliverOrderHandler = async () => {
+		try {
+			dispatch({ type: 'DELIVER_REQUEST' });
+			const { data } = await axios.put(
+				`/api/orders/${order._id}/deliver`,
+				{},
+				{
+					headers: { authorization: `Bearer ${userInfo.token}` },
+				}
+			);
+
+			dispatch({ type: 'DELIVER_SUCCESS', payload: data });
+			toast.success('Order Delivered Successfully!');
+		} catch (err) {
+			toast.error(getError(err));
+			dispatch({ type: 'DELIVER_FAIL' });
+		}
+	};
 
 	return loading ? (
 		<LoadingBox></LoadingBox>
@@ -233,6 +267,16 @@ function OrderScreen() {
 											</div>
 										)}
 										{loadingPay && <LoadingBox></LoadingBox>}
+									</ListGroup.Item>
+								)}
+								{userInfo.IsAdmin && order.isPaid && !order.isDelivered && (
+									<ListGroup.Item>
+										{loadingDeliver && <LoadingBox />}
+										<div className="d-grid">
+											<Button type="button" onClick={deliverOrderHandler}>
+												Deliver Order
+											</Button>
+										</div>
 									</ListGroup.Item>
 								)}
 							</ListGroup>
