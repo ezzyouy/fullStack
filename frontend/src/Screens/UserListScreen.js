@@ -5,6 +5,8 @@ import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../Component/LoadingBox';
 import MessageBox from '../Component/MessageBox';
+import Button from 'react-bootstrap/Button';
+import { useNavigate } from 'react-router-dom';
 
 const reducer = (state, action) => {
 	switch (action.type) {
@@ -24,6 +26,7 @@ const reducer = (state, action) => {
 	}
 };
 function UserListScreen() {
+	const navigate = useNavigate();
 	const { state } = useContext(Store);
 	const { userInfo } = state;
 
@@ -74,7 +77,15 @@ function UserListScreen() {
 								<td>{user.email}</td>
 								{/* <td>{user._id}</td> */}
 								<td>{user.IsAdmin ? 'YES' : 'NO'}</td>
-								<td></td>
+								<td>
+									<Button
+										type="button"
+										variant="light"
+										onClick={() => navigate(`/admin/user/${user._id}`)}
+									>
+										Edit
+									</Button>
+								</td>
 							</tr>
 						))}
 					</tbody>
