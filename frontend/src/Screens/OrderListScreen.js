@@ -79,7 +79,7 @@ function OrderListScreen() {
 								<td>{o.createdAt?.substring(0, 10)}</td>
 								<td>${o.totalPrice?.toFixed(2)}</td>
 								<td>{o.isPaid ? o.paidAt?.substring(0, 10) : 'No'}</td>
-								<td>{o.deliveredAt?.substring(0, 10)}</td>
+								<td>{o.delivredAt?.substring(0, 10) || 'No'}</td>
 								<td>
 									<Button
 										type="button"
