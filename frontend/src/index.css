@@ -130,3 +130,7 @@ main {
 	border-radius: 1rem 0 0 1rem;
 	border-right: 0;
 }
+
+button.thumbnail {
+	padding: 0;
+}
