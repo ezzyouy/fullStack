@@ -35,11 +35,12 @@ import ProductEditScreen from './Screens/ProductEditScreen';
 import OrderListScreen from './Screens/OrderListScreen';
 import UserListScreen from './Screens/UserListScreen';
 import UserEditScreen from './Screens/UserEditScreen';
+import MapScreen from './Screens/MapScreen';
 
 function App() {
 	const { state, dispatch: ctxDispatch } = useContext(Store);
 
-	const { cart, userInfo } = state;
+	const { fullBox, cart, userInfo } = state;
 
 	const signoutHandler = () => {
 		ctxDispatch({ type: 'USER_SIGNOUT' });
@@ -69,6 +70,12 @@ function App() {
 					sidebarIsOpen
 						? 'd-flex flex-column site-container active-cont'
 						: 'd-flex flex-column site-container'
+					// ? fullBox
+					// 	? 'd-flex flex-column site-container active-cont full-box'
+					// 	: 'd-flex flex-column site-container active-cont'
+					// : fullBox
+					// ? 'd-flex flex-column site-container full-box'
+					// : 'd-flex flex-column site-container'
 				}
 			>
 				<ToastContainer position="bottom-center" limit={1} />
@@ -189,6 +196,14 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<ProfileScreen />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/map"
+								element={
+									<ProtectedRoute>
+										<MapScreen />
 									</ProtectedRoute>
 								}
 							/>

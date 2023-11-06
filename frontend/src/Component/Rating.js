@@ -29,7 +29,7 @@ function Rating(props) {
 			<span>
 				<FontAwesomeIcon icon={rating >= 5 ? fasFaStar : rating >= 4.5 ? faStarHalfAlt : farFaStar} />
 			</span>
-			{caption ? <span>{caption}</span> : <span> {' ' + numReviews + ' reviews'} </span>}
+			{caption ? <span>{caption}</span> : numReviews ? <span> {' ' + numReviews + ' reviews'} </span> : <></>}
 		</div>
 	);
 }

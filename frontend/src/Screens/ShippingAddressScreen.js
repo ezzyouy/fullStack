@@ -10,6 +10,7 @@ function ShippingAddressScreen() {
 	const navigate = useNavigate();
 	const { state, dispatch: ctxDispatch } = useContext(Store);
 	const {
+		fullBox,
 		userInfo,
 		cart: { shippingAddress },
 	} = state;
@@ -29,11 +30,18 @@ function ShippingAddressScreen() {
 		e.preventDefault();
 		ctxDispatch({
 			type: 'SAVE_SHIPPING_ADDRESS',
-			payload: { fullName, address, city, postalCode, country },
+			payload: { fullName, address, city, postalCode, country, location: shippingAddress.location },
 		});
-		localStorage.setItem('shippingAddress', JSON.stringify({ fullName, address, city, postalCode, country }));
+		localStorage.setItem(
+			'shippingAddress',
+			JSON.stringify({ fullName, address, city, postalCode, country, location: shippingAddress.location })
+		);
 		navigate('/payment');
 	};
+
+	useEffect(() => {
+		ctxDispatch({ type: 'SET_FULLBOX_OFF' });
+	}, [ctxDispatch, fullBox]);
 
 	return (
 		<div>
@@ -64,6 +72,19 @@ function ShippingAddressScreen() {
 						<Form.Label>Country</Form.Label>
 						<Form.Control value={country} onChange={(e) => setCountry(e.target.value)} required />
 					</Form.Group>
+					<div className="mb-3">
+						<Button type="button" id="chooseOnMap" variant="light" onClick={() => navigate('/map')}>
+							Choose Location On Map
+						</Button>
+					</div>
+					{shippingAddress?.location && shippingAddress?.location.lat ? (
+						<div>
+							LAT:{shippingAddress?.location.lat}
+							LNG:{shippingAddress?.location.lng}
+						</div>
+					) : (
+						<div>No location</div>
+					)}
 					<div className="mb-3">
 						<Button variant="primary" type="submit">
 							continue
