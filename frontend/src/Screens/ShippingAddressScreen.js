@@ -10,7 +10,7 @@ function ShippingAddressScreen() {
 	const navigate = useNavigate();
 	const { state, dispatch: ctxDispatch } = useContext(Store);
 	const {
-		// fullBox,
+		fullBox,
 		userInfo,
 		cart: { shippingAddress },
 	} = state;
