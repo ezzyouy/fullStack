@@ -24,9 +24,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/keys/paypal', (req, res) => {
+app.get('/api/keys/paypal', (req, res) => {
 	res.send(process.env.PAYPAL_CLIENT_ID || 'sb');
 });
+// app.get('/api/keys/google', (req, res) => {
+// 	res.send({ key: process.env.GOOGLE_API_KEY || '' });
+// });
 app.use('/api/seed', seedRouter);
 app.use('/api/products', productRouter);
 app.use('/api/users', userRouter);
