@@ -1,89 +1,139 @@
-import React, { useContext, useReducer, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Store } from '../Store';
-import Form from 'react-bootstrap/esm/Form';
-import Button from 'react-bootstrap/esm/Button';
-import { toast } from 'react-toastify';
-import { getError } from '../utils';
-import axios from 'axios';
+import React, { useContext, useReducer, useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { Store } from "../Store";
+import Form from "react-bootstrap/esm/Form";
+import Button from "react-bootstrap/esm/Button";
+import { toast } from "react-toastify";
+import { getError } from "../utils";
+import axios from "axios";
 
 const reducer = (state, action) => {
-	switch (action.type) {
-		case 'UPDATE_REQUEST':
-			return { ...state, loadingUpdate: true };
-		case 'UPDATE_SUCCESS':
-			return { ...state, loadingUpdate: false };
-		case 'UPDATE_FAIL':
-			return { ...state, loadingUpdate: false };
-		default:
-			return state;
-	}
+  switch (action.type) {
+    case "UPDATE_REQUEST":
+      return { ...state, loadingUpdate: true };
+    case "UPDATE_SUCCESS":
+      return { ...state, loadingUpdate: false };
+    case "UPDATE_FAIL":
+      return { ...state, loadingUpdate: false };
+    default:
+      return state;
+  }
 };
 function ProfileScreen() {
-	const { state, dispatch: ctxDispatch } = useContext(Store);
-	const { userInfo } = state;
-	const [name, setName] = useState(userInfo.name || '');
-	const [email, setEmail] = useState(userInfo.email || '');
-	const [password, setPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { userInfo } = state;
+  const [name, setName] = useState(userInfo.name || "");
+  const [email, setEmail] = useState(userInfo.email || "");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [sellerName, setSellerName] = useState(userInfo.seller.name || "");
+  const [sellerDescription, setSellerDescription] = useState(
+    userInfo.seller.description || ""
+  );
+  const [logo, setLogo] = useState(userInfo.seller.logo || "");
 
-	const [{ loadingUpdate }, dispatch] = useReducer(reducer, {
-		loadingUpdate: false,
-	});
+  const [{ loadingUpdate }, dispatch] = useReducer(reducer, {
+    loadingUpdate: false,
+  });
 
-	const submitHandler = async (e) => {
-		e.preventDefault();
-		try {
-			dispatch({ type: 'UPDATE_REQUEST' });
-			const { data } = await axios.post(
-				'/api/users/profile',
-				{
-					name,
-					email,
-					password,
-				},
-				{
-					headers: { authorization: `Bearer ${userInfo.token}` },
-				}
-			);
-			dispatch({ type: 'UPDATE_SUCCESS' });
-			ctxDispatch({ type: 'USER_SIGNIN', payload: data });
-			localStorage.setItem('userInfo', JSON.stringify(data));
-			toast.success(`Profile updated successfully`);
-		} catch (error) {
-			dispatch({ type: 'UPDATE_FAIL' });
-			toast.error(getError(error));
-		}
-	};
-	return (
-		<div className="container small-container">
-			<Helmet>
-				<title>User Profile</title>
-			</Helmet>
-			<h1>User Profile</h1>
-			<form onSubmit={submitHandler}>
-				<Form.Group className="mb-3" controlId="name">
-					<Form.Label>Name</Form.Label>
-					<Form.Control value={name} onChange={(e) => setName(e.target.value)} required />
-				</Form.Group>
-				<Form.Group className="mb-3" controlId="email">
-					<Form.Label>Email</Form.Label>
-					<Form.Control value={email} onChange={(e) => setEmail(e.target.value)} />
-				</Form.Group>
-				<Form.Group className="mb-3" controlId="password">
-					<Form.Label>Password</Form.Label>
-					<Form.Control type="password" onChange={(e) => setPassword(e.target.value)} />
-				</Form.Group>
-				<Form.Group className="mb-3" controlId="confirmpassword">
-					<Form.Label>Confirm Password</Form.Label>
-					<Form.Control type="password" onChange={(e) => setConfirmPassword(e.target.value)} />
-				</Form.Group>
-				<div className="mb-3">
-					<Button type="submit">Update</Button>
-				</div>
-			</form>
-		</div>
-	);
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch({ type: "UPDATE_REQUEST" });
+      const { data } = await axios.post(
+        "/api/users/profile",
+        {
+          name,
+          email,
+          password,
+          sellerName,
+          sellerDescription,
+          logo,
+        },
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      dispatch({ type: "UPDATE_SUCCESS" });
+      ctxDispatch({ type: "USER_SIGNIN", payload: data });
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      toast.success(`Profile updated successfully`);
+    } catch (error) {
+      dispatch({ type: "UPDATE_FAIL" });
+      toast.error(getError(error));
+    }
+  };
+  return (
+    <div className="container small-container">
+      <Helmet>
+        <title>User Profile</title>
+      </Helmet>
+      <h1>User Profile</h1>
+      <form onSubmit={submitHandler}>
+        <Form.Group className="mb-3" controlId="name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="password">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="confirmpassword">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control
+            type="password"
+            value={password}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </Form.Group>
+        {userInfo.isSeller && (
+          <>
+            <Form.Group className="mb-3" controlId="seller">
+              <Form.Label>Seller</Form.Label>
+              <Form.Control
+                value={sellerName}
+                onChange={(e) => setSellerName(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="logo">
+              <Form.Label>Logo</Form.Label>
+              <Form.Control
+                value={logo}
+                onChange={(e) => setLogo(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="sellerdescription">
+              <Form.Label>Seller Description</Form.Label>
+              <Form.Control
+                value={sellerDescription}
+                onChange={(e) => setSellerDescription(e.target.value)}
+                required
+              />
+            </Form.Group>
+          </>
+        )}
+        <div className="mb-3">
+          <Button type="submit">Update</Button>
+        </div>
+      </form>
+    </div>
+  );
 }
 
 export default ProfileScreen;
