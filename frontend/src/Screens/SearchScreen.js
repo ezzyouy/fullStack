@@ -90,14 +90,16 @@ function SearchScreen() {
 		fetchCategories();
 	}, []);
 
-	const getFilterUrl = (filter) => {
+	const getFilterUrl = (filter, skipPathname) => {
 		const filterPage = filter.page || page;
 		const filterCategory = filter.category || category;
 		const filterQuery = filter.query || query;
 		const filterRating = filter.rating || rating;
 		const filterPrice = filter.price || price;
 		const sortOrder = filter.order || order;
-		const to = `/search?category=${filterCategory}&query=${filterQuery}&rating=${filterRating}&price=${filterPrice}&rating=${rating}&order=${sortOrder}&page=${filterPage}`;
+		const to = `${
+			skipPathname ? '' : '/search?'
+		}category=${filterCategory}&query=${filterQuery}&rating=${filterRating}&price=${filterPrice}&rating=${rating}&order=${sortOrder}&page=${filterPage}`;
 		const url = new URL(to, window.location.origin);
 		const path = {
 			hash: url.hash,
@@ -235,7 +237,11 @@ function SearchScreen() {
 							</Row>
 							<div>
 								{[...Array(pages).keys()]?.map((x) => (
-									<LinkContainer key={x + 1} className="mx-1" to={getFilterUrl({ page: x + 1 })}>
+									<LinkContainer
+										key={x + 1}
+										className="mx-1"
+										to={{ pathname: '/search', search: getFilterUrl({ page: x + 1 }, true) }}
+									>
 										<Button className={Number(page) === x + 1 ? 'text-bold' : ''} variant="light">
 											{x + 1}
 										</Button>
